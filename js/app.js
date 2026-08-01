@@ -1,0 +1,13 @@
+const loader=document.querySelector('.page-loader');
+window.addEventListener('load',()=>setTimeout(()=>loader.classList.add('is-hidden'),450));
+const header=document.getElementById('siteHeader');
+const onScroll=()=>header.classList.toggle('scrolled',window.scrollY>30);
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+const menuBtn=document.querySelector('.menu-btn');
+const mobileMenu=document.querySelector('.mobile-menu');
+menuBtn.addEventListener('click',()=>{const open=menuBtn.classList.toggle('open');mobileMenu.classList.toggle('open',open);mobileMenu.setAttribute('aria-hidden',String(!open));menuBtn.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':''});
+mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menuBtn.classList.remove('open');mobileMenu.classList.remove('open');document.body.style.overflow=''}));
+const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+const countObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;const el=entry.target;const target=Number(el.dataset.count);let start=0;const duration=1200;const began=performance.now();function update(now){const progress=Math.min((now-began)/duration,1);const eased=1-Math.pow(1-progress,3);el.textContent=Math.round(start+(target-start)*eased);if(progress<1)requestAnimationFrame(update)}requestAnimationFrame(update);countObserver.unobserve(el)}),{threshold:.7});
+document.querySelectorAll('[data-count]').forEach(el=>countObserver.observe(el));
